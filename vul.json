@@ -1,0 +1,57 @@
+{
+"title": "Fortify Vulnerabilities for Application ID 38287",
+"summary": "This report consolidates all vulnerabilities detected by Fortify for application ID 38287. Each entry includes the issue type, file, severity, recommendation, and a detailed analysis",
+    "table": [
+        {
+            "issueld": 27281196,
+            "issueName": "Cross-Site Scripting: DOM",
+            "filePath": "src/components/organisms/CollectionsApp/CollectionsApp-jsx",
+            "lineNumber": 181,
+            "priority": "Critical",
+            "currentVersion": null,
+            "upgradeVersion": null,
+            "recommendation": "The solution to prevent XSS is to ensure that validation occurs in the required places and that relevant properties are set to prevent vulnerabilities.",
+            "analysisTrace": [
+            "CollectionsApp. jsx:181 - Read window. location"
+            "CollectionsApp.jsx:181 - Assignment to window. location.href",
+            "CollectionsApp.jsx:181 - Read window. location",
+            "CollectionsApp.jsx:181 - Assignment to window. location.href"
+            ]
+            "status": "Reviewed"
+        },
+        {
+            "issueId": 27281197,
+            "issueName": "Cross-Site Scripting: DOM",
+            "filePath": "src/components/organisms/CollectionsApp/CollectionsApp-jsx",
+            "LineNumber": 192,
+            "priority": "Critical",
+            "currentVersion": null,
+            "upgradeVersion": null,
+            "recommendation": "The solution to prevent XSS is to ensure that validation occurs in the required places and that relevant properties are set to prevent vulnerabilities.",
+            "analysisTrace": [
+            "CollectionsApp. jsx:192 - Read window. location",
+            "CollectionsApp. jsx:192 - Assignment to window. location.href",
+            "CollectionsApp. jsx: 192 - Read window. location",
+            "CollectionsApp. jsx:192 - Assignment to window. location.href"
+            ],
+            "status": "Reviewed"
+        },
+             {
+            "issueId": 27281198,
+            "issueName": "Cross-Site Scripting: DOM",
+            "filePath": "src/components/organisms/CollectionsApp/CollectionsApp-jsx",
+            "LineNumber": 192,
+            "priority": "Critical",
+            "currentVersion": null,
+            "upgradeVersion": null,
+            "recommendation": "The solution to prevent XSS is to ensure that validation occurs in the required places and that relevant properties are set to prevent vulnerabilities.",
+            "analysisTrace": [
+            "CollectionsApp. jsx:192 - Read window. location",
+            "CollectionsApp. jsx:192 - Assignment to window. location.href",
+            "CollectionsApp. jsx: 192 - Read window. location",
+            "CollectionsApp. jsx:192 - Assignment to window. location.href"
+            ],
+            "status": "Reviewed"
+        }
+    ]
+}
