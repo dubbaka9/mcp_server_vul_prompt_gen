@@ -1,0 +1,387 @@
+# Frontend Vulnerabilities Knowledge Base
+# This file contains common frontend security vulnerabilities and their solutions
+
+[cross_site_scripting]
+severity = "high"
+description = "Cross-Site Scripting (XSS) occurs when malicious scripts are injected into trusted websites. User input is not properly sanitized before being rendered in the DOM."
+common_causes = [
+    "Unvalidated user input rendered directly in HTML",
+    "Dynamic HTML generation without proper encoding",
+    "Unsafe use of innerHTML property",
+    "Missing Content Security Policy",
+    "Improper handling of URL parameters"
+]
+solutions = [
+    "Use textContent instead of innerHTML for user data",
+    "Implement proper input validation and sanitization",
+    "Use Content Security Policy (CSP) headers",
+    "Encode output data appropriately (HTML, JavaScript, URL encoding)",
+    "Use framework-specific XSS protection mechanisms"
+]
+prevention = [
+    "Never trust user input",
+    "Validate and sanitize all inputs on both client and server side",
+    "Use secure coding practices and frameworks with built-in XSS protection",
+    "Regular security testing and code reviews"
+]
+code_examples = '''
+// BAD - Vulnerable to XSS
+element.innerHTML = userInput;
+
+// GOOD - Safe approach
+element.textContent = userInput;
+
+// GOOD - Using DOMPurify for sanitization
+element.innerHTML = DOMPurify.sanitize(userInput);
+
+// GOOD - Proper validation
+function sanitizeInput(input) {
+    return input.replace(/[<>\"\']/g, function(match) {
+        const escape = {
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#x27;'
+        };
+        return escape[match];
+    });
+}
+'''
+
+[cross_site_request_forgery]
+severity = "medium"
+description = "CSRF attacks trick users into performing unwanted actions on a web application where they are authenticated."
+common_causes = [
+    "Missing or improper CSRF token validation",
+    "Accepting state-changing requests via GET",
+    "Weak session management",
+    "Missing SameSite cookie attributes"
+]
+solutions = [
+    "Implement CSRF tokens for all state-changing operations",
+    "Use SameSite cookie attribute",
+    "Validate Referer/Origin headers",
+    "Use POST requests for state-changing operations",
+    "Implement proper session management"
+]
+prevention = [
+    "Always use CSRF protection for forms",
+    "Set proper cookie security attributes",
+    "Use double-submit cookie pattern",
+    "Implement proper CORS policies"
+]
+code_examples = '''
+// GOOD - CSRF token implementation
+<form method="POST" action="/transfer">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <input type="text" name="amount">
+    <button type="submit">Transfer</button>
+</form>
+
+// GOOD - SameSite cookie setting
+document.cookie = "sessionId=abc123; SameSite=Strict; Secure; HttpOnly";
+
+// GOOD - CSRF validation in JavaScript
+function validateCSRF() {
+    const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    return fetch('/api/action', {
+        method: 'POST',
+        headers: {
+            'X-CSRF-Token': token,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+}
+'''
+
+[insecure_direct_object_references]
+severity = "high"
+description = "IDOR occurs when an application exposes references to internal objects and allows users to access unauthorized data."
+common_causes = [
+    "Missing access controls on object references",
+    "Predictable resource identifiers",
+    "Lack of proper authorization checks",
+    "Exposing internal object IDs in URLs"
+]
+solutions = [
+    "Implement proper authorization checks",
+    "Use indirect object references",
+    "Validate user permissions for each request",
+    "Use UUIDs instead of sequential IDs",
+    "Implement access control lists"
+]
+prevention = [
+    "Never trust client-side access controls",
+    "Validate authorization on every request",
+    "Use principle of least privilege",
+    "Regular security audits of access controls"
+]
+code_examples = '''
+// BAD - Direct object reference
+fetch(`/api/user/${userId}/profile`);
+
+// GOOD - Indirect reference with validation
+function getUserProfile() {
+    return fetch('/api/user/profile', {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${authToken}`
+        }
+    }).then(response => {
+        if (!response.ok) {
+            throw new Error('Unauthorized access');
+        }
+        return response.json();
+    });
+}
+
+// GOOD - Using UUIDs and proper validation
+const userId = generateUUID(); // e.g., 550e8400-e29b-41d4-a716-446655440000
+if (isAuthorized(currentUser, userId)) {
+    return getUserData(userId);
+}
+'''
+
+[sensitive_data_exposure]
+severity = "high"
+description = "Sensitive data exposure occurs when applications do not adequately protect sensitive information such as passwords, credit cards, or personal data."
+common_causes = [
+    "Storing sensitive data in plain text",
+    "Transmitting data over unencrypted connections",
+    "Inadequate encryption methods",
+    "Logging sensitive information",
+    "Client-side storage of sensitive data"
+]
+solutions = [
+    "Use strong encryption for sensitive data",
+    "Implement HTTPS everywhere",
+    "Avoid storing sensitive data client-side",
+    "Use secure password hashing algorithms",
+    "Implement data classification and handling policies"
+]
+prevention = [
+    "Classify data sensitivity levels",
+    "Encrypt data at rest and in transit",
+    "Regular security assessments",
+    "Implement data retention policies"
+]
+code_examples = '''
+// BAD - Storing sensitive data in localStorage
+localStorage.setItem('password', userPassword);
+localStorage.setItem('creditCard', cardNumber);
+
+// GOOD - Never store sensitive data client-side
+// Use secure session management instead
+sessionStorage.setItem('sessionToken', encryptedToken);
+
+// GOOD - Proper password handling
+function hashPassword(password) {
+    // Use bcrypt or similar secure hashing
+    return bcrypt.hash(password, 12);
+}
+
+// GOOD - Secure data transmission
+fetch('/api/sensitive-data', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${secureToken}`
+    },
+    body: JSON.stringify(encryptedData)
+});
+'''
+
+[broken_authentication]
+severity = "critical"
+description = "Broken authentication vulnerabilities allow attackers to compromise passwords, keys, or session tokens, or exploit implementation flaws to assume users' identities."
+common_causes = [
+    "Weak password requirements",
+    "Improper session management",
+    "Missing multi-factor authentication",
+    "Credential stuffing vulnerabilities",
+    "Weak password recovery mechanisms"
+]
+solutions = [
+    "Implement strong password policies",
+    "Use multi-factor authentication",
+    "Secure session management",
+    "Rate limiting for login attempts",
+    "Secure password recovery processes"
+]
+prevention = [
+    "Regular password policy reviews",
+    "Monitor for suspicious login activities",
+    "Use secure authentication frameworks",
+    "Regular security training for developers"
+]
+code_examples = '''
+// GOOD - Strong password validation
+function validatePassword(password) {
+    const minLength = 12;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumbers = /\d/.test(password);
+    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    
+    return password.length >= minLength && 
+           hasUpperCase && hasLowerCase && 
+           hasNumbers && hasSpecial;
+}
+
+// GOOD - Secure session management
+function createSecureSession(userId) {
+    const sessionId = generateSecureRandomString(32);
+    const sessionData = {
+        userId: userId,
+        createdAt: Date.now(),
+        expiresAt: Date.now() + (30 * 60 * 1000) // 30 minutes
+    };
+    
+    // Store session server-side
+    sessionStore.set(sessionId, sessionData);
+    
+    // Set secure cookie
+    document.cookie = `sessionId=${sessionId}; Secure; HttpOnly; SameSite=Strict; Max-Age=1800`;
+}
+
+// GOOD - Rate limiting implementation
+let loginAttempts = new Map();
+function rateLimitLogin(username) {
+    const attempts = loginAttempts.get(username) || 0;
+    if (attempts >= 5) {
+        throw new Error('Too many login attempts. Please try again later.');
+    }
+    loginAttempts.set(username, attempts + 1);
+}
+'''
+
+[security_misconfiguration]
+severity = "medium"
+description = "Security misconfiguration occurs when security settings are not defined, implemented, or maintained properly."
+common_causes = [
+    "Default configurations left unchanged",
+    "Incomplete or ad-hoc configurations",
+    "Unnecessary features enabled",
+    "Missing security headers",
+    "Outdated software components"
+]
+solutions = [
+    "Implement security hardening guidelines",
+    "Regular configuration reviews",
+    "Automated configuration management",
+    "Security header implementation",
+    "Regular software updates"
+]
+prevention = [
+    "Use configuration management tools",
+    "Regular security assessments",
+    "Follow security best practices",
+    "Implement change management processes"
+]
+code_examples = '''
+// GOOD - Security headers implementation
+app.use((req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('X-XSS-Protection', '1; mode=block');
+    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+    res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline'");
+    next();
+});
+
+// GOOD - Secure cookie configuration
+const cookieOptions = {
+    httpOnly: true,
+    secure: true, // HTTPS only
+    sameSite: 'strict',
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+};
+
+// GOOD - Environment-specific configuration
+const config = {
+    development: {
+        debug: true,
+        logging: 'verbose'
+    },
+    production: {
+        debug: false,
+        logging: 'error',
+        ssl: true,
+        securityHeaders: true
+    }
+};
+'''
+
+[insufficient_logging_monitoring]
+severity = "low"
+description = "Insufficient logging and monitoring, coupled with missing or ineffective incident response, allows attackers to maintain persistence and pivot to more systems."
+common_causes = [
+    "Insufficient logging of security events",
+    "Log tampering vulnerabilities",
+    "Inadequate monitoring systems",
+    "Missing alerting mechanisms",
+    "Poor incident response procedures"
+]
+solutions = [
+    "Comprehensive logging strategy",
+    "Real-time monitoring implementation",
+    "Automated alerting systems",
+    "Regular log analysis",
+    "Incident response procedures"
+]
+prevention = [
+    "Regular security monitoring reviews",
+    "Automated threat detection",
+    "Security information and event management (SIEM)",
+    "Regular incident response drills"
+]
+code_examples = '''
+// GOOD - Comprehensive logging
+function logSecurityEvent(event, user, details) {
+    const logEntry = {
+        timestamp: new Date().toISOString(),
+        event: event,
+        userId: user.id,
+        userIP: user.ip,
+        userAgent: user.userAgent,
+        details: details,
+        severity: determineSeverity(event)
+    };
+    
+    securityLogger.log(logEntry);
+    
+    // Alert on critical events
+    if (logEntry.severity === 'critical') {
+        alertSecurityTeam(logEntry);
+    }
+}
+
+// GOOD - Monitoring implementation
+function monitorLoginAttempts() {
+    setInterval(() => {
+        const failedAttempts = getFailedLoginAttempts(last5Minutes);
+        if (failedAttempts.length > 10) {
+            logSecurityEvent('POTENTIAL_BRUTE_FORCE', null, {
+                attemptCount: failedAttempts.length,
+                targetAccounts: failedAttempts.map(a => a.username)
+            });
+        }
+    }, 60000); // Check every minute
+}
+
+// GOOD - Error logging without sensitive data
+function safeErrorLog(error, request) {
+    const sanitizedError = {
+        message: error.message,
+        stack: error.stack,
+        timestamp: Date.now(),
+        url: request.url,
+        method: request.method,
+        userAgent: request.headers['user-agent'],
+        // Never log sensitive data like passwords, tokens, etc.
+    };
+    
+    errorLogger.error(sanitizedError);
+}
+'''

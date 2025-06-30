@@ -1,0 +1,60 @@
+# Core LangChain dependencies
+langchain==0.1.20
+langchain-openai==0.1.8
+langchain-community==0.0.38
+
+# Azure OpenAI integration
+openai==1.35.5
+azure-identity==1.16.1
+
+# Vector database and embeddings
+faiss-cpu==1.8.0
+tiktoken==0.7.0
+
+# Data processing and parsing
+pandas==2.1.4
+numpy==1.25.2
+toml==0.10.2
+beautifulsoup4==4.12.3
+lxml==5.2.2
+
+# File handling and utilities
+python-dotenv==1.0.1
+pydantic==2.7.4
+
+# Logging and monitoring
+structlog==24.1.0
+
+# Testing (optional)
+pytest==8.2.2
+pytest-asyncio==0.23.7
+
+# Additional utilities
+requests==2.32.3
+urllib3==2.2.2
+certifi==2024.6.2
+
+# Data validation and processing
+jsonschema==4.22.0
+python-dateutil==2.9.0
+
+# Security utilities
+cryptography==42.0.8
+
+# Optional: For enhanced text processing
+nltk==3.8.1
+spacy==3.7.4
+
+# Optional: For advanced data analysis
+scikit-learn==1.5.0
+matplotlib==3.8.4
+seaborn==0.13.2
+
+# Optional: For async operations
+aiohttp==3.9.5
+asyncio==3.4.3
+
+# Development tools (optional)
+black==24.4.2
+flake8==7.1.0
+mypy==1.10.1
